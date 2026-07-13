@@ -1350,7 +1350,7 @@
         // Finish shortly after so the burst is visible
         setTimeout(() => {
           if (this.running) this.endLevel(true);
-        }, 700);
+        }, 300);
       }
 
       if (this._targetHitAt && performance.now() - this._targetHitAt > 700) {
