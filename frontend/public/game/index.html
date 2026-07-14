@@ -1,311 +1,547 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1020" />
-  <title>Catch! — Arcade Falling Objects</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <!-- ============ LOADING SCREEN ============ -->
-  <div id="loading" class="screen active" data-testid="loading-screen">
-    <div class="logo-wrap">
-      <div class="logo-emoji">🧺</div>
-      <h1 class="logo-title">CATCH!</h1>
-      <p class="logo-sub">Falling Objects Arcade</p>
-    </div>
-    <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
-    <div class="loader-text" id="loader-text">Loading assets…</div>
-  </div>
-
-  <!-- ============ MAIN MENU ============ -->
-  <div id="menu" class="screen" data-testid="main-menu">
-    <div class="menu-bg"></div>
-    <canvas class="menu-canvas" id="menu-canvas"></canvas>
-    <div class="menu-scroll">
-      <div class="menu-content">
-        <div class="hero">
-          <div class="hero-emoji floaty">🧺</div>
-          <h1 class="hero-title">CATCH!</h1>
-          <p class="hero-tag">Catch stars. Dodge bombs. Level up.</p>
-        </div>
-        <div class="menu-grid">
-          <button class="btn btn-primary btn-hero fade-in" style="--d:0ms" data-action="play" data-testid="menu-play-btn">
-            <span class="btn-icon">▶</span><span>Play</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:60ms" data-action="levels" data-testid="menu-levels-btn">
-            <span class="tile-emoji">🗺️</span><span>Levels</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:120ms" data-action="shop" data-testid="menu-shop-btn">
-            <span class="tile-emoji">🛒</span><span>Shop</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:180ms" data-action="achievements" data-testid="menu-achievements-btn">
-            <span class="tile-emoji">🏆</span><span>Achievements</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:240ms" data-action="leaderboard" data-testid="menu-leaderboard-btn">
-            <span class="tile-emoji">📊</span><span>Leaderboard</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:300ms" data-action="missions" data-testid="menu-missions-btn">
-            <span class="tile-emoji">🎯</span><span>Missions</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:360ms" data-action="daily" data-testid="menu-daily-btn">
-            <span class="tile-emoji">🎁</span><span>Daily</span>
-          </button>
-          <button class="btn btn-tile fade-in" style="--d:420ms" data-action="settings" data-testid="menu-settings-btn">
-            <span class="tile-emoji">⚙️</span><span>Settings</span>
-          </button>
-        </div>
-        <div class="wallet glass fade-in" style="--d:520ms">
-          <div class="wallet-item"><span class="wallet-icon">🪙</span><span id="menu-coins" data-testid="menu-coins">0</span></div>
-          <div class="wallet-item"><span class="wallet-icon">💎</span><span id="menu-gems" data-testid="menu-gems">0</span></div>
-          <div class="wallet-item"><span class="wallet-icon">⭐</span><span id="menu-stars" data-testid="menu-stars">0</span></div>
-        </div>
-        <div class="menu-footer fade-in" style="--d:600ms">
-          <span id="menu-player-name" data-testid="menu-player-name">Player: —</span>
-          <span class="dot">•</span>
-          <span id="menu-best">Best: 0</span>
-        </div>
-        <div class="menu-tip fade-in" style="--d:700ms">
-          <span>💡 Tip:</span>
-          <span id="menu-tip-text">Catch coins to build a combo — but avoid the bombs!</span>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1020" />
+    <title>Catch! — Arcade Falling Objects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Bungee&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
+  </head>
+  <body>
+    <!-- ============ LOADING SCREEN ============ -->
+    <div id="loading" class="screen active" data-testid="loading-screen">
+      <div class="logo-wrap">
+        <div class="logo-emoji">🧺</div>
+        <h1 class="logo-title">CATCH!</h1>
+        <p class="logo-sub">Falling Objects Arcade</p>
       </div>
-    </div>
-  </div>
-
-  <!-- ============ LEVELS SCREEN ============ -->
-  <div id="levels" class="screen" data-testid="levels-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu" data-testid="levels-back-btn">← Menu</button>
-      <div class="topbar-title">Select Level</div>
-      <div class="wallet-mini"><span>🪙</span><span id="levels-coins">0</span></div>
-    </div>
-    <div class="worlds" id="worlds-container"></div>
-  </div>
-
-  <!-- ============ SHOP SCREEN ============ -->
-  <div id="shop" class="screen" data-testid="shop-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu" data-testid="shop-back-btn">← Menu</button>
-      <div class="topbar-title">Shop</div>
-      <div class="wallet-mini">
-        <span>🪙</span><span id="shop-coins">0</span>
-        <span style="margin-left:12px">💎</span><span id="shop-gems">0</span>
+      <div class="loader-bar">
+        <div class="loader-fill" id="loader-fill"></div>
       </div>
+      <div class="loader-text" id="loader-text">Loading assets…</div>
     </div>
-    <div class="shop-tabs">
-      <button class="tab active" data-shop-tab="baskets" data-testid="shop-tab-baskets">Baskets</button>
-      <button class="tab" data-shop-tab="trails" data-testid="shop-tab-trails">Trails</button>
-      <button class="tab" data-shop-tab="themes" data-testid="shop-tab-themes">Themes</button>
-    </div>
-    <div class="shop-grid" id="shop-grid"></div>
-  </div>
 
-  <!-- ============ LEADERBOARD ============ -->
-  <div id="leaderboard" class="screen" data-testid="leaderboard-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu" data-testid="leaderboard-back-btn">← Menu</button>
-      <div class="topbar-title">Leaderboard</div>
-      <div></div>
-    </div>
-    <div class="lb-tabs">
-      <button class="tab active" data-lb-tab="score" data-testid="lb-tab-score">Top Score</button>
-      <button class="tab" data-lb-tab="combo" data-testid="lb-tab-combo">Best Combo</button>
-      <button class="tab" data-lb-tab="level" data-testid="lb-tab-level">Levels Cleared</button>
-    </div>
-    <div class="lb-wrap">
-      <div class="lb-podium glass" id="lb-podium"></div>
-      <div class="lb-list" id="lb-list"></div>
-    </div>
-  </div>
-
-  <!-- ============ MISSIONS SCREEN ============ -->
-  <div id="missions" class="screen" data-testid="missions-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu" data-testid="missions-back-btn">← Menu</button>
-      <div class="topbar-title">Missions</div>
-      <div class="wallet-mini"><span>⏱️</span><span id="missions-refresh">—</span></div>
-    </div>
-    <div class="missions-wrap">
-      <div class="missions-header glass">
-        <div class="mh-icon">🎯</div>
-        <div>
-          <h2>Daily Missions</h2>
-          <p>Complete missions to earn extra coins &amp; gems. Refreshes every day at midnight.</p>
-        </div>
-      </div>
-      <div class="missions-list" id="missions-list"></div>
-    </div>
-  </div>
-
-  <!-- ============ ACHIEVEMENTS SCREEN ============ -->
-  <div id="achievements" class="screen" data-testid="achievements-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu">← Menu</button>
-      <div class="topbar-title">Achievements</div>
-      <div></div>
-    </div>
-    <div class="ach-grid" id="ach-grid"></div>
-  </div>
-
-  <!-- ============ DAILY REWARDS ============ -->
-  <div id="daily" class="screen" data-testid="daily-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu">← Menu</button>
-      <div class="topbar-title">Daily Rewards</div>
-      <div></div>
-    </div>
-    <div class="daily-wrap">
-      <div class="daily-card glass">
-        <h2>Daily Login Reward</h2>
-        <p id="daily-status">Come back every day for bigger rewards!</p>
-        <div class="daily-days" id="daily-days"></div>
-        <button class="btn btn-primary" id="claim-daily" data-testid="claim-daily-btn">Claim Today</button>
-      </div>
-      <div class="daily-card glass">
-        <h2>Lucky Spin 🎡</h2>
-        <p>Spin once per day for coins &amp; gems.</p>
-        <div class="wheel-wrap">
-          <div class="wheel" id="wheel">
-            <div class="wheel-labels" id="wheel-labels"></div>
-            <div class="wheel-inner"></div>
+    <!-- ============ MAIN MENU ============ -->
+    <div id="menu" class="screen" data-testid="main-menu">
+      <div class="menu-bg"></div>
+      <canvas class="menu-canvas" id="menu-canvas"></canvas>
+      <div class="menu-scroll">
+        <div class="menu-content">
+          <div class="hero">
+            <div class="hero-emoji floaty">🧺</div>
+            <h1 class="hero-title">CATCH!</h1>
+            <p class="hero-tag">Catch stars. Dodge bombs. Level up.</p>
           </div>
-          <div class="wheel-pointer">▼</div>
+          <div class="menu-grid">
+            <button
+              class="btn btn-primary btn-hero fade-in"
+              style="--d: 0ms"
+              data-action="play"
+              data-testid="menu-play-btn"
+            >
+              <span class="btn-icon">▶</span><span>Play</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 60ms"
+              data-action="levels"
+              data-testid="menu-levels-btn"
+            >
+              <span class="tile-emoji">🗺️</span><span>Levels</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 120ms"
+              data-action="shop"
+              data-testid="menu-shop-btn"
+            >
+              <span class="tile-emoji">🛒</span><span>Shop</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 180ms"
+              data-action="achievements"
+              data-testid="menu-achievements-btn"
+            >
+              <span class="tile-emoji">🏆</span><span>Achievements</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 240ms"
+              data-action="leaderboard"
+              data-testid="menu-leaderboard-btn"
+            >
+              <span class="tile-emoji">📊</span><span>Leaderboard</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 300ms"
+              data-action="missions"
+              data-testid="menu-missions-btn"
+            >
+              <span class="tile-emoji">🎯</span><span>Missions</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 360ms"
+              data-action="daily"
+              data-testid="menu-daily-btn"
+            >
+              <span class="tile-emoji">🎁</span><span>Daily</span>
+            </button>
+            <button
+              class="btn btn-tile fade-in"
+              style="--d: 420ms"
+              data-action="settings"
+              data-testid="menu-settings-btn"
+            >
+              <span class="tile-emoji">⚙️</span><span>Settings</span>
+            </button>
+          </div>
+          <div class="wallet glass fade-in" style="--d: 520ms">
+            <div class="wallet-item">
+              <span class="wallet-icon">🪙</span
+              ><span id="menu-coins" data-testid="menu-coins">0</span>
+            </div>
+            <div class="wallet-item">
+              <span class="wallet-icon">💎</span
+              ><span id="menu-gems" data-testid="menu-gems">0</span>
+            </div>
+            <div class="wallet-item">
+              <span class="wallet-icon">⭐</span
+              ><span id="menu-stars" data-testid="menu-stars">0</span>
+            </div>
+          </div>
+          <div class="menu-footer fade-in" style="--d: 600ms">
+            <span id="menu-player-name" data-testid="menu-player-name"
+              >Player: —</span
+            >
+            <span class="dot">•</span>
+            <span id="menu-best">Best: 0</span>
+          </div>
+          <div class="menu-tip fade-in" style="--d: 700ms">
+            <span>💡 Tip:</span>
+            <span id="menu-tip-text"
+              >Catch coins to build a combo — but avoid the bombs!</span
+            >
+          </div>
         </div>
-        <button class="btn btn-primary" id="spin-btn" data-testid="spin-btn">Spin (Free)</button>
       </div>
     </div>
-  </div>
 
-  <!-- ============ SETTINGS ============ -->
-  <div id="settings" class="screen" data-testid="settings-screen">
-    <div class="topbar glass">
-      <button class="btn-back" data-action="back-menu">← Menu</button>
-      <div class="topbar-title">Settings</div>
-      <div></div>
-    </div>
-    <div class="settings-wrap">
-      <div class="settings-card glass">
-        <label>Player Name</label>
-        <input type="text" id="setting-name" maxlength="18" data-testid="settings-name-input" />
-      </div>
-      <div class="settings-card glass">
-        <label>Music Volume <span id="music-val">60%</span></label>
-        <input type="range" min="0" max="100" value="60" id="music-vol" data-testid="music-slider" />
-      </div>
-      <div class="settings-card glass">
-        <label>SFX Volume <span id="sfx-val">80%</span></label>
-        <input type="range" min="0" max="100" value="80" id="sfx-vol" data-testid="sfx-slider" />
-      </div>
-      <div class="settings-card glass toggle-row">
-        <label>Dark Mode</label>
-        <label class="switch"><input type="checkbox" id="dark-mode" checked /><span></span></label>
-      </div>
-      <div class="settings-card glass toggle-row">
-        <label>Reduced Motion</label>
-        <label class="switch"><input type="checkbox" id="reduced-motion" /><span></span></label>
-      </div>
-      <div class="settings-card glass">
-        <label>Controls</label>
-        <p style="opacity:.75;margin:6px 0 0">Desktop: ← → or A/D. Mouse also works. Mobile: touch and drag.</p>
-      </div>
-      <button class="btn btn-danger" id="reset-progress" data-testid="reset-progress-btn">Reset All Progress</button>
-    </div>
-  </div>
-
-  <!-- ============ GAME SCREEN ============ -->
-  <div id="game" class="screen" data-testid="game-screen">
-    <canvas id="gameCanvas" data-testid="game-canvas"></canvas>
-
-    <!-- HUD -->
-    <div class="hud">
-      <div class="hud-left glass">
-        <div class="hud-hearts" id="hud-hearts" data-testid="hud-hearts"></div>
-        <div class="hud-stat"><span>🪙</span><span id="hud-coins" data-testid="hud-coins">0</span></div>
-      </div>
-      <div class="hud-center glass">
-        <div class="hud-score">
-          <div class="hud-label">SCORE</div>
-          <div class="hud-value" id="hud-score" data-testid="hud-score">0</div>
-        </div>
-        <div class="hud-level">
-          <div class="hud-label" id="hud-level-label">LEVEL 1</div>
-          <div class="hud-progress"><div class="hud-progress-fill" id="hud-progress-fill"></div></div>
+    <!-- ============ LEVELS SCREEN ============ -->
+    <div id="levels" class="screen" data-testid="levels-screen">
+      <div class="topbar glass">
+        <button
+          class="btn-back"
+          data-action="back-menu"
+          data-testid="levels-back-btn"
+        >
+          ← Menu
+        </button>
+        <div class="topbar-title">Select Level</div>
+        <div class="wallet-mini">
+          <span>🪙</span><span id="levels-coins">0</span>
         </div>
       </div>
-      <div class="hud-right glass">
-        <div class="hud-timer" id="hud-timer" data-testid="hud-timer">1:00</div>
-        <button class="hud-pause" id="pause-btn" data-testid="pause-btn">⏸</button>
+      <div class="worlds" id="worlds-container"></div>
+    </div>
+
+    <!-- ============ SHOP SCREEN ============ -->
+    <div id="shop" class="screen" data-testid="shop-screen">
+      <div class="topbar glass">
+        <button
+          class="btn-back"
+          data-action="back-menu"
+          data-testid="shop-back-btn"
+        >
+          ← Menu
+        </button>
+        <div class="topbar-title">Shop</div>
+        <div class="wallet-mini">
+          <span>🪙</span><span id="shop-coins">0</span>
+          <span style="margin-left: 12px">💎</span><span id="shop-gems">0</span>
+        </div>
+      </div>
+      <div class="shop-tabs">
+        <button
+          class="tab active"
+          data-shop-tab="baskets"
+          data-testid="shop-tab-baskets"
+        >
+          Baskets
+        </button>
+        <button
+          class="tab"
+          data-shop-tab="trails"
+          data-testid="shop-tab-trails"
+        >
+          Trails
+        </button>
+        <button
+          class="tab"
+          data-shop-tab="themes"
+          data-testid="shop-tab-themes"
+        >
+          Themes
+        </button>
+      </div>
+      <div class="shop-grid" id="shop-grid"></div>
+    </div>
+
+    <!-- ============ LEADERBOARD ============ -->
+    <div id="leaderboard" class="screen" data-testid="leaderboard-screen">
+      <div class="topbar glass">
+        <button
+          class="btn-back"
+          data-action="back-menu"
+          data-testid="leaderboard-back-btn"
+        >
+          ← Menu
+        </button>
+        <div class="topbar-title">Leaderboard</div>
+        <div></div>
+      </div>
+      <div class="lb-tabs">
+        <button
+          class="tab active"
+          data-lb-tab="score"
+          data-testid="lb-tab-score"
+        >
+          Top Score
+        </button>
+        <button class="tab" data-lb-tab="combo" data-testid="lb-tab-combo">
+          Best Combo
+        </button>
+        <button class="tab" data-lb-tab="level" data-testid="lb-tab-level">
+          Levels Cleared
+        </button>
+      </div>
+      <div class="lb-wrap">
+        <div class="lb-podium glass" id="lb-podium"></div>
+        <div class="lb-list" id="lb-list"></div>
       </div>
     </div>
 
-    <div class="combo-display" id="combo-display" data-testid="combo-display"></div>
-    <div class="powerup-display" id="powerup-display"></div>
-
-    <div class="mobile-controls" id="mobile-controls">
-      <button class="mc-btn" data-mc="left" data-testid="mobile-left-btn">◀</button>
-      <button class="mc-btn" data-mc="right" data-testid="mobile-right-btn">▶</button>
-    </div>
-  </div>
-
-  <!-- ============ PAUSE MENU ============ -->
-  <div id="pause" class="overlay" data-testid="pause-overlay">
-    <div class="modal glass">
-      <h2>Paused</h2>
-      <button class="btn btn-primary" data-action="resume" data-testid="resume-btn">Resume</button>
-      <button class="btn" data-action="restart" data-testid="restart-btn">Restart Level</button>
-      <button class="btn btn-danger" data-action="quit" data-testid="quit-btn">Quit to Menu</button>
-    </div>
-  </div>
-
-  <!-- ============ GAME OVER ============ -->
-  <div id="gameover" class="overlay" data-testid="gameover-overlay">
-    <div class="modal glass">
-      <h2 id="gameover-title">Game Over</h2>
-      <div class="results">
-        <div class="result-row"><span>Score</span><span id="go-score">0</span></div>
-        <div class="result-row"><span>Coins Earned</span><span id="go-coins">0</span></div>
-        <div class="result-row"><span>Best Combo</span><span id="go-combo">0</span></div>
-        <div class="result-row"><span>Best Score</span><span id="go-best">0</span></div>
+    <!-- ============ MISSIONS SCREEN ============ -->
+    <div id="missions" class="screen" data-testid="missions-screen">
+      <div class="topbar glass">
+        <button
+          class="btn-back"
+          data-action="back-menu"
+          data-testid="missions-back-btn"
+        >
+          ← Menu
+        </button>
+        <div class="topbar-title">Missions</div>
+        <div class="wallet-mini">
+          <span>⏱️</span><span id="missions-refresh">—</span>
+        </div>
       </div>
-      <button class="btn btn-primary" data-action="retry" data-testid="retry-btn">Retry</button>
-      <button class="btn" data-action="quit" data-testid="go-quit-btn">Menu</button>
-    </div>
-  </div>
-
-  <!-- ============ VICTORY ============ -->
-  <div id="victory" class="overlay" data-testid="victory-overlay">
-    <div class="modal glass victory">
-      <div class="fireworks" id="fireworks"></div>
-      <h2>Level Complete! 🎉</h2>
-      <div class="stars-earned" id="stars-earned"></div>
-      <div class="results">
-        <div class="result-row"><span>Score</span><span id="v-score">0</span></div>
-        <div class="result-row"><span>Coins</span><span id="v-coins">0</span></div>
-        <div class="result-row"><span>Best Combo</span><span id="v-combo">0</span></div>
+      <div class="missions-wrap">
+        <div class="missions-header glass">
+          <div class="mh-icon">🎯</div>
+          <div>
+            <h2>Daily Missions</h2>
+            <p>
+              Complete missions to earn extra coins &amp; gems. Refreshes every
+              day at midnight.
+            </p>
+          </div>
+        </div>
+        <div class="missions-list" id="missions-list"></div>
       </div>
-      <button class="btn btn-primary" data-action="next-level" data-testid="next-level-btn">Next Level →</button>
-      <button class="btn" data-action="quit">Menu</button>
     </div>
-  </div>
 
-  <!-- ============ NAME PROMPT ============ -->
-  <div id="name-prompt" class="overlay" data-testid="name-prompt">
-    <div class="modal glass">
-      <h2>What's your name?</h2>
-      <input type="text" id="name-input" placeholder="Player" maxlength="18" data-testid="name-input" />
-      <button class="btn btn-primary" id="name-save" data-testid="name-save-btn">Let's Play!</button>
+    <!-- ============ ACHIEVEMENTS SCREEN ============ -->
+    <div id="achievements" class="screen" data-testid="achievements-screen">
+      <div class="topbar glass">
+        <button class="btn-back" data-action="back-menu">← Menu</button>
+        <div class="topbar-title">Achievements</div>
+        <div></div>
+      </div>
+      <div class="ach-grid" id="ach-grid"></div>
     </div>
-  </div>
 
-  <!-- ============ TOASTS ============ -->
-  <div class="toast-container" id="toasts" data-testid="toasts"></div>
+    <!-- ============ DAILY REWARDS ============ -->
+    <div id="daily" class="screen" data-testid="daily-screen">
+      <div class="topbar glass">
+        <button class="btn-back" data-action="back-menu">← Menu</button>
+        <div class="topbar-title">Daily Rewards</div>
+        <div></div>
+      </div>
+      <div class="daily-wrap">
+        <div class="daily-card glass">
+          <h2>Daily Login Reward</h2>
+          <p id="daily-status">Come back every day for bigger rewards!</p>
+          <div class="daily-days" id="daily-days"></div>
+          <button
+            class="btn btn-primary"
+            id="claim-daily"
+            data-testid="claim-daily-btn"
+          >
+            Claim Today
+          </button>
+        </div>
+        <div class="daily-card glass">
+          <h2>Lucky Spin 🎡</h2>
+          <p>Spin once per day for coins &amp; gems.</p>
+          <div class="wheel-wrap">
+            <div class="wheel" id="wheel">
+              <div class="wheel-labels" id="wheel-labels"></div>
+              <div class="wheel-inner"></div>
+            </div>
+            <div class="wheel-pointer">▼</div>
+          </div>
+          <button class="btn btn-primary" id="spin-btn" data-testid="spin-btn">
+            Spin (Free)
+          </button>
+        </div>
+      </div>
+    </div>
 
-  <!-- ============ SCRIPTS ============ -->
-  <script src="game.js"></script>
-</body>
+    <!-- ============ SETTINGS ============ -->
+    <div id="settings" class="screen" data-testid="settings-screen">
+      <div class="topbar glass">
+        <button class="btn-back" data-action="back-menu">← Menu</button>
+        <div class="topbar-title">Settings</div>
+        <div></div>
+      </div>
+      <div class="settings-wrap">
+        <div class="settings-card glass">
+          <label>Player Name</label>
+          <input
+            type="text"
+            id="setting-name"
+            maxlength="18"
+            data-testid="settings-name-input"
+          />
+        </div>
+        <div class="settings-card glass">
+          <label>Music Volume <span id="music-val">60%</span></label>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="60"
+            id="music-vol"
+            data-testid="music-slider"
+          />
+        </div>
+        <div class="settings-card glass">
+          <label>SFX Volume <span id="sfx-val">80%</span></label>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="80"
+            id="sfx-vol"
+            data-testid="sfx-slider"
+          />
+        </div>
+        <div class="settings-card glass toggle-row">
+          <label>Dark Mode</label>
+          <label class="switch"
+            ><input type="checkbox" id="dark-mode" checked /><span></span
+          ></label>
+        </div>
+        <div class="settings-card glass toggle-row">
+          <label>Reduced Motion</label>
+          <label class="switch"
+            ><input type="checkbox" id="reduced-motion" /><span></span
+          ></label>
+        </div>
+        <div class="settings-card glass">
+          <label>Controls</label>
+          <p style="opacity: 0.75; margin: 6px 0 0">
+            Desktop: ← → or A/D. Mouse also works. Mobile: touch and drag.
+          </p>
+        </div>
+        <button
+          class="btn btn-danger"
+          id="reset-progress"
+          data-testid="reset-progress-btn"
+        >
+          Reset All Progress
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <div id="game" class="screen" data-testid="game-screen">
+      <canvas id="gameCanvas" data-testid="game-canvas"></canvas>
+
+      <!-- HUD -->
+      <div class="hud">
+        <div class="hud-left glass">
+          <div
+            class="hud-hearts"
+            id="hud-hearts"
+            data-testid="hud-hearts"
+          ></div>
+          <div class="hud-stat">
+            <span>🪙</span><span id="hud-coins" data-testid="hud-coins">0</span>
+          </div>
+        </div>
+        <div class="hud-center glass">
+          <div class="hud-score">
+            <div class="hud-label">SCORE</div>
+            <div class="hud-value" id="hud-score" data-testid="hud-score">
+              0
+            </div>
+          </div>
+          <div class="hud-level">
+            <div class="hud-label" id="hud-level-label">LEVEL 1</div>
+            <div class="hud-progress">
+              <div class="hud-progress-fill" id="hud-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hud-right glass">
+          <div class="hud-timer" id="hud-timer" data-testid="hud-timer">
+            1:00
+          </div>
+          <button class="hud-pause" id="pause-btn" data-testid="pause-btn">
+            ⏸
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="combo-display"
+        id="combo-display"
+        data-testid="combo-display"
+      ></div>
+      <div class="powerup-display" id="powerup-display"></div>
+
+      <div class="mobile-controls" id="mobile-controls">
+        <button class="mc-btn" data-mc="left" data-testid="mobile-left-btn">
+          ◀
+        </button>
+        <button class="mc-btn" data-mc="right" data-testid="mobile-right-btn">
+          ▶
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ PAUSE MENU ============ -->
+    <div id="pause" class="overlay" data-testid="pause-overlay">
+      <div class="modal glass">
+        <h2>Paused</h2>
+        <button
+          class="btn btn-primary"
+          data-action="resume"
+          data-testid="resume-btn"
+        >
+          Resume
+        </button>
+        <button class="btn" data-action="restart" data-testid="restart-btn">
+          Restart Level
+        </button>
+        <button
+          class="btn btn-danger"
+          data-action="quit"
+          data-testid="quit-btn"
+        >
+          Quit to Menu
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ GAME OVER ============ -->
+    <div id="gameover" class="overlay" data-testid="gameover-overlay">
+      <div class="modal glass">
+        <h2 id="gameover-title">Game Over</h2>
+        <div class="results">
+          <div class="result-row">
+            <span>Score</span><span id="go-score">0</span>
+          </div>
+          <div class="result-row">
+            <span>Coins Earned</span><span id="go-coins">0</span>
+          </div>
+          <div class="result-row">
+            <span>Best Combo</span><span id="go-combo">0</span>
+          </div>
+          <div class="result-row">
+            <span>Best Score</span><span id="go-best">0</span>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          data-action="retry"
+          data-testid="retry-btn"
+        >
+          Retry
+        </button>
+        <button class="btn" data-action="quit" data-testid="go-quit-btn">
+          Menu
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ VICTORY ============ -->
+    <div id="victory" class="overlay" data-testid="victory-overlay">
+      <div class="modal glass victory">
+        <div class="fireworks" id="fireworks"></div>
+        <h2>Level Complete! 🎉</h2>
+        <div class="stars-earned" id="stars-earned"></div>
+        <div class="results">
+          <div class="result-row">
+            <span>Score</span><span id="v-score">0</span>
+          </div>
+          <div class="result-row">
+            <span>Coins</span><span id="v-coins">0</span>
+          </div>
+          <div class="result-row">
+            <span>Best Combo</span><span id="v-combo">0</span>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          data-action="next-level"
+          data-testid="next-level-btn"
+        >
+          Next Level →
+        </button>
+        <button class="btn" data-action="quit">Menu</button>
+      </div>
+    </div>
+
+    <!-- ============ NAME PROMPT ============ -->
+    <div id="name-prompt" class="overlay" data-testid="name-prompt">
+      <div class="modal glass">
+        <h2>What's your name?</h2>
+        <input
+          type="text"
+          id="name-input"
+          placeholder="Player"
+          maxlength="18"
+          data-testid="name-input"
+        />
+        <button
+          class="btn btn-primary"
+          id="name-save"
+          data-testid="name-save-btn"
+        >
+          Let's Play!
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ TOASTS ============ -->
+    <div class="toast-container" id="toasts" data-testid="toasts"></div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="game.js"></script>
+  </body>
 </html>

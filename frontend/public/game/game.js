@@ -1339,6 +1339,13 @@
 
       // Auto-complete when target reached
       if (this.score >= this.level.target && !this._targetHitAt) {
+        console.log(
+          "TARGET REACHED",
+          this.score,
+          this.level.target,
+          this._targetHitAt,
+        );
+        console.log("Score:", this.score, "Target:", this.level.target);
         this._targetHitAt = performance.now();
         UI.showCombo("TARGET! 🎯");
         // small victory particle burst on player
